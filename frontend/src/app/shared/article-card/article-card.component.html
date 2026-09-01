@@ -1,0 +1,33 @@
+<article class="card-item">
+  @if (thumbnail()) {
+    <a class="thumb" [routerLink]="['/article', article.slug]" tabindex="-1" aria-hidden="true">
+      <img [src]="thumbnail()" [alt]="article.title" loading="lazy" />
+    </a>
+  }
+
+  <div class="body">
+    <div class="top">
+      <a class="category" [routerLink]="['/category', article.categorySlug]">{{ article.categoryName }}</a>
+      @if (!article.published) {
+        <span class="badge badge-warning">Draft</span>
+      }
+    </div>
+
+    <h3 class="title">
+      <a [routerLink]="['/article', article.slug]">
+        <span class="stretch"></span>{{ article.title }}
+      </a>
+    </h3>
+
+    @if (article.description) {
+      <p class="description">{{ article.description }}</p>
+    }
+
+    <div class="foot">
+      @for (tag of article.tags.slice(0, 3); track tag) {
+        <span class="tag">#{{ tag }}</span>
+      }
+      <time class="date" [attr.datetime]="article.createdAt">{{ article.createdAt | date: 'mediumDate' }}</time>
+    </div>
+  </div>
+</article>

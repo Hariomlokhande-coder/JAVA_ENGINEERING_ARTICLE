@@ -1,0 +1,192 @@
+.head {
+  max-width: var(--w-prose);
+  margin-bottom: var(--s-6);
+}
+
+.crumbs {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  margin-bottom: var(--s-4);
+  font-size: var(--t-sm);
+  color: var(--text-3);
+}
+
+.crumbs a {
+  color: var(--text-2);
+}
+
+.crumbs a:hover {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.head h1 {
+  font-size: var(--t-3xl);
+  letter-spacing: -0.03em;
+}
+
+.lead {
+  margin-top: var(--s-3);
+  color: var(--text-2);
+  font-size: var(--t-lg);
+  line-height: 1.55;
+}
+
+.progress {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  margin-top: var(--s-5);
+}
+
+.bar {
+  flex: 1;
+  max-width: 320px;
+  height: 6px;
+  border-radius: var(--r-full);
+  background: var(--surface-3);
+  overflow: hidden;
+}
+
+.bar-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+  transition: width 0.35s ease;
+}
+
+.progress-label {
+  color: var(--text-2);
+  font-size: var(--t-sm);
+}
+
+.progress-label strong {
+  color: var(--text);
+  font-family: var(--font-ui);
+}
+
+/* Topic list */
+.topics {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.topic {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  padding: var(--s-4) var(--s-5);
+  border-bottom: 1px solid var(--border);
+  transition: background 0.14s ease;
+}
+
+.topic:last-child {
+  border-bottom: none;
+}
+
+.topic:hover {
+  background: var(--surface-2);
+}
+
+.check {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  border: 1.5px solid var(--border-strong);
+  border-radius: var(--r-xs);
+  background: var(--surface);
+  color: transparent;
+  cursor: pointer;
+  z-index: 1;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.check:hover {
+  border-color: var(--accent);
+}
+
+.topic.done .check {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+
+.num {
+  font-family: var(--font-mono);
+  font-size: var(--t-sm);
+  color: var(--text-3);
+  font-variant-numeric: tabular-nums;
+  min-width: 1.4rem;
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+}
+
+.title {
+  font-family: var(--font-ui);
+  font-weight: 600;
+  font-size: var(--t-md);
+  color: var(--text);
+}
+
+.title:hover {
+  text-decoration: none;
+}
+
+.topic:hover .title {
+  color: var(--accent);
+}
+
+.stretch {
+  position: absolute;
+  inset: 0;
+}
+
+.description {
+  margin-top: 0.15rem;
+  color: var(--text-2);
+  font-size: var(--t-base);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.topic.done .title,
+.topic.done .description {
+  color: var(--text-3);
+}
+
+.arrow {
+  color: var(--text-3);
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.topic:hover .arrow {
+  opacity: 1;
+  transform: none;
+}
+
+@media (max-width: 640px) {
+  .num,
+  .arrow {
+    display: none;
+  }
+
+  .description {
+    white-space: normal;
+  }
+}

@@ -1,0 +1,52 @@
+.login-page {
+  display: flex;
+  justify-content: center;
+  padding-block: var(--s-8);
+}
+
+.login-card {
+  width: 100%;
+  max-width: 26rem;
+  padding: var(--s-6);
+  box-shadow: var(--shadow-lg);
+}
+
+.mark {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  margin-bottom: var(--s-4);
+  border-radius: var(--r-md);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.login-card h1 {
+  font-size: var(--t-xl);
+}
+
+.intro {
+  margin: var(--s-2) 0 var(--s-6);
+  font-size: var(--t-base);
+}
+
+.login-button {
+  width: 100%;
+  margin-top: var(--s-2);
+  padding-block: 0.7rem;
+}
+
+.caps {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--amber);
+  font-weight: 600;
+}
+
+.foot {
+  margin-top: var(--s-5);
+  text-align: center;
+  font-size: var(--t-base);
+}

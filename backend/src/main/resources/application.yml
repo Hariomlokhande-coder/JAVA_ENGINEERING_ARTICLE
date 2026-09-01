@@ -1,0 +1,69 @@
+spring:
+  application:
+    name: technical-blog
+
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/technical_blog}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: false
+        jdbc:
+          batch_size: 25
+    show-sql: false
+
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 5MB
+      max-request-size: 10MB
+
+  jackson:
+    default-property-inclusion: non_null
+
+server:
+  port: ${SERVER_PORT:8080}
+  error:
+    include-message: never
+    include-stacktrace: never
+
+app:
+  jwt:
+    # Must be at least 32 characters. Override in production with the JWT_SECRET env variable.
+    secret: ${JWT_SECRET:change-this-development-secret-key-min-32-chars}
+    expiration-ms: ${JWT_EXPIRATION_MS:86400000}
+    issuer: technical-blog
+
+  cors:
+    # Both ports are allowed so ng serve can run on either one.
+    allowed-origins: ${CORS_ORIGINS:http://localhost:4200,http://localhost:4300}
+
+  storage:
+    upload-dir: ${UPLOAD_DIR:uploads}
+    articles-folder: articles
+    max-file-size-bytes: 5242880
+    # SVG is deliberately excluded: it can carry script and would run on this origin.
+    allowed-content-types:
+      - image/png
+      - image/jpeg
+      - image/gif
+      - image/webp
+
+  admin:
+    seed-enabled: ${ADMIN_SEED_ENABLED:true}
+    username: ${ADMIN_USERNAME:admin}
+    email: ${ADMIN_EMAIL:admin@example.com}
+    # Placeholder only. Set ADMIN_PASSWORD before the very first start,
+    # the seeder runs once while the user table is empty.
+    password: ${ADMIN_PASSWORD:ChangeMe@12345}
+
+logging:
+  level:
+    com.technicalblog: INFO

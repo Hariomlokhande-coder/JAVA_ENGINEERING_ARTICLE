@@ -1,0 +1,52 @@
+.page-shell {
+  display: flex;
+  justify-content: center;
+  padding: var(--s-8) var(--s-4);
+  background: var(--page-gradient);
+  min-height: 70vh;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 27rem;
+  height: fit-content;
+  padding: var(--s-6);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  box-shadow: var(--edge-highlight), var(--shadow-lg);
+}
+
+.mark {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  margin-bottom: var(--s-4);
+  border: 1px solid var(--gloss-border);
+  border-radius: var(--r-md);
+  background: var(--gloss);
+  color: var(--accent);
+}
+
+.auth-card h1 {
+  font-size: var(--t-xl);
+}
+
+.intro {
+  margin: var(--s-2) 0 var(--s-6);
+  font-size: var(--t-base);
+  line-height: 1.55;
+}
+
+.auth-button {
+  width: 100%;
+  margin-top: var(--s-2);
+  padding-block: 0.7rem;
+}
+
+.foot {
+  margin-top: var(--s-5);
+  text-align: center;
+  font-size: var(--t-base);
+}

@@ -1,0 +1,152 @@
+/* Page sits on a soft gradient with the content held in a panel, as on the reference site */
+.page-shell {
+  padding: var(--s-4);
+  background: var(--page-gradient);
+}
+
+.panel {
+  width: 100%;
+  max-width: var(--w-page);
+  margin: 0 auto var(--s-4);
+  padding: var(--s-5);
+  border-radius: var(--r-lg);
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  box-shadow: var(--edge-highlight), var(--shadow-sm);
+}
+
+/* Header row */
+.panel-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--s-5);
+  margin-bottom: var(--s-5);
+}
+
+.titles {
+  max-width: 46rem;
+}
+
+.panel-head h1 {
+  font-size: var(--t-2xl);
+  letter-spacing: -0.02em;
+}
+
+.lead {
+  margin-top: var(--s-2);
+  color: var(--text-2);
+  font-size: var(--t-md);
+  line-height: 1.55;
+}
+
+.random {
+  flex-shrink: 0;
+}
+
+/* Overall progress: the one glossy panel on a matte page */
+.progress {
+  position: relative;
+  margin-bottom: var(--s-6);
+  padding: var(--s-4) var(--s-5);
+  border: 1px solid var(--gloss-border);
+  border-radius: var(--r-md);
+  background: var(--gloss);
+  overflow: hidden;
+}
+
+.progress::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 55%;
+  background: var(--gloss-sheen);
+  pointer-events: none;
+}
+
+.progress-bar {
+  height: 12px;
+  position: relative;
+  border-radius: var(--r-full);
+  background: var(--track-bg);
+  box-shadow: var(--track-inset);
+  overflow: hidden;
+}
+
+.progress-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent-gloss);
+  transition: width 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.progress-foot {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: var(--s-2);
+  color: var(--text-2);
+  font-size: var(--t-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Expand all */
+.expand-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: var(--s-3);
+}
+
+.expand-all {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: 0.35rem 0.5rem;
+  border: none;
+  border-radius: var(--r-sm);
+  background: none;
+  color: var(--text-2);
+  font-family: var(--font-ui);
+  font-size: var(--t-base);
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.expand-all:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.sections {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+
+.panel-title {
+  margin-bottom: var(--s-4);
+  font-size: var(--t-xl);
+}
+
+@media (max-width: 860px) {
+  .page-shell {
+    padding: var(--s-2);
+  }
+
+  .panel {
+    padding: var(--s-4);
+  }
+
+  .panel-head {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--s-4);
+  }
+
+  .random {
+    align-self: flex-start;
+  }
+}

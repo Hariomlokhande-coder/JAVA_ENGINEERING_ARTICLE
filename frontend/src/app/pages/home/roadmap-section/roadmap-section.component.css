@@ -1,0 +1,240 @@
+.section {
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  box-shadow: var(--edge-highlight), var(--shadow-sm);
+  overflow: hidden;
+}
+
+/* Progress strip across the top edge of the card */
+.strip {
+  height: 6px;
+  margin: var(--s-3) var(--s-4) 0;
+  border-radius: var(--r-full);
+  background: var(--surface-3);
+  box-shadow: var(--track-inset);
+  overflow: hidden;
+}
+
+.strip-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+  transition: width 0.4s ease;
+}
+
+/* Header row: chevron, title, count */
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  width: 100%;
+  padding: var(--s-3) var(--s-4) var(--s-4);
+  border: none;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.chevron {
+  color: var(--text);
+  transition: transform 0.2s ease;
+}
+
+.section.expanded .chevron {
+  transform: rotate(90deg);
+}
+
+.name {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-ui);
+  font-size: var(--t-base);
+  font-weight: 700;
+}
+
+.count {
+  flex-shrink: 0;
+  color: var(--text-3);
+  font-size: var(--t-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Topic table */
+.table-wrap {
+  padding: 0 var(--s-4) var(--s-4);
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--t-base);
+}
+
+th {
+  padding: 0.5rem 0.75rem;
+  color: var(--text-2);
+  font-family: var(--font-ui);
+  font-size: var(--t-sm);
+  font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
+}
+
+td {
+  padding: 0.6rem 0.75rem;
+  border-top: 1px solid var(--border);
+  text-align: center;
+  vertical-align: middle;
+}
+
+.col-status {
+  width: 80px;
+}
+
+.col-topic {
+  text-align: left;
+}
+
+.col-icon {
+  width: 90px;
+}
+
+.col-level {
+  width: 110px;
+}
+
+/* Status checkbox */
+.check {
+  display: grid;
+  place-items: center;
+  width: 19px;
+  height: 19px;
+  margin: 0 auto;
+  border: 1.5px solid var(--border-strong);
+  border-radius: var(--r-xs);
+  background: transparent;
+  color: transparent;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.check:hover {
+  border-color: var(--text-2);
+}
+
+tr.done .check {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+
+/* Topic cell */
+.topic-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--text);
+}
+
+.topic-link svg {
+  color: var(--accent);
+}
+
+.topic-link:hover {
+  text-decoration: underline;
+}
+
+tr.done .topic-link {
+  color: var(--text-2);
+}
+
+/* Action icons */
+.icon-link {
+  display: inline-grid;
+  place-items: center;
+  color: var(--text-3);
+  transition: transform 0.15s ease, color 0.15s ease;
+}
+
+.icon-link:hover {
+  transform: scale(1.12);
+}
+
+.icon-link.video {
+  color: hsl(3 85% 60%);
+}
+
+.icon-link.code {
+  color: var(--accent);
+}
+
+.dash {
+  color: var(--text-3);
+}
+
+/* Difficulty pill */
+.level {
+  display: inline-block;
+  min-width: 64px;
+  padding: 0.15rem 0.6rem;
+  border-radius: var(--r-full);
+  font-family: var(--font-ui);
+  font-size: var(--t-xs);
+  font-weight: 600;
+}
+
+.level-easy {
+  background: var(--green-soft);
+  color: var(--green);
+}
+
+.level-medium {
+  background: var(--amber-soft);
+  color: var(--amber);
+}
+
+.level-hard {
+  background: var(--red-soft);
+  color: var(--red);
+}
+
+/* Favourite star */
+.star {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--text-3);
+  cursor: pointer;
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.star:hover {
+  color: var(--amber);
+  transform: scale(1.12);
+}
+
+.star.on {
+  color: var(--amber);
+}
+
+.empty {
+  padding: 0 var(--s-4) var(--s-4);
+  color: var(--text-3);
+  font-size: var(--t-base);
+}
+
+@media (max-width: 720px) {
+  .col-icon,
+  .col-level {
+    width: auto;
+  }
+
+  table {
+    font-size: var(--t-sm);
+  }
+}

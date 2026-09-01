@@ -1,0 +1,82 @@
+<div class="page container">
+  @if (loading()) {
+    <app-loading message="Loading category..." />
+  } @else if (errorMessage()) {
+    <app-empty-state title="Category not available" [description]="errorMessage()" icon="!">
+      <a class="btn" routerLink="/">Back to roadmap</a>
+    </app-empty-state>
+  } @else {
+    @if (category(); as detail) {
+      <header class="head">
+        <nav class="crumbs" aria-label="Breadcrumb">
+          <a routerLink="/">Roadmap</a>
+          <span aria-hidden="true">/</span>
+          <span>{{ detail.name }}</span>
+        </nav>
+
+        <h1>{{ detail.name }}</h1>
+
+        @if (detail.description) {
+          <p class="lead">{{ detail.description }}</p>
+        }
+
+        @if (detail.articles.length > 0) {
+          <div class="progress">
+            <div class="bar">
+              <span class="bar-fill" [style.width.%]="progressPercent()"></span>
+            </div>
+            <span class="progress-label">
+              <strong>{{ completedCount() }}</strong> of {{ detail.articles.length }} completed
+            </span>
+          </div>
+        }
+      </header>
+
+      @if (detail.articles.length === 0) {
+        <app-empty-state
+          title="No articles in this category yet"
+          description="Articles added to this category will appear here."
+        />
+      } @else {
+        <ol class="topics">
+          @for (article of detail.articles; track article.id; let i = $index) {
+            <li class="topic" [class.done]="isCompleted(article.id)">
+              <button
+                type="button"
+                class="check"
+                (click)="toggleCompleted(article.id)"
+                [attr.aria-pressed]="isCompleted(article.id)"
+                [attr.aria-label]="'Mark ' + article.title + ' as read'"
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="m4 12 5.5 5.5L20 7" />
+                </svg>
+              </button>
+
+              <span class="num">{{ i + 1 }}</span>
+
+              <div class="body">
+                <a class="title" [routerLink]="['/article', article.slug]">
+                  <span class="stretch"></span>{{ article.title }}
+                </a>
+                @if (article.description) {
+                  <p class="description">{{ article.description }}</p>
+                }
+              </div>
+
+              @if (!article.published) {
+                <span class="badge badge-warning">Draft</span>
+              }
+
+              <svg class="arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M5 12h14m-6-6 6 6-6 6" />
+              </svg>
+            </li>
+          }
+        </ol>
+      }
+    }
+  }
+</div>

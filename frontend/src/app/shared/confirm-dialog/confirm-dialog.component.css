@@ -1,0 +1,91 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: var(--s-5);
+  background: hsl(215 45% 20% / 0.45);
+  backdrop-filter: blur(2px);
+  animation: fade 0.14s ease;
+}
+
+.dialog {
+  width: 100%;
+  max-width: 24rem;
+  padding: var(--s-6);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-lg);
+  animation: pop 0.16s cubic-bezier(0.2, 0, 0.2, 1);
+}
+
+.icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  margin-bottom: var(--s-4);
+  border-radius: var(--r-full);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.icon.danger {
+  background: var(--red-soft);
+  color: var(--red);
+}
+
+.dialog h2 {
+  font-size: var(--t-lg);
+  letter-spacing: -0.015em;
+}
+
+.dialog p {
+  margin-top: var(--s-2);
+  font-size: var(--t-base);
+  line-height: 1.55;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--s-3);
+  margin-top: var(--s-6);
+}
+
+/* Solid red for destructive confirmation, distinct from the outlined table buttons. */
+.btn-danger-solid {
+  background: var(--red);
+  border-color: var(--red);
+  color: hsl(0 0% 100%);
+}
+
+.btn-danger-solid:hover {
+  background: var(--red);
+  filter: brightness(1.08);
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+}
+
+@media (max-width: 480px) {
+  .actions {
+    flex-direction: column-reverse;
+  }
+
+  .actions .btn {
+    width: 100%;
+  }
+}

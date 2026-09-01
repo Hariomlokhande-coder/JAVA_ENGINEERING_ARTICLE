@@ -1,0 +1,71 @@
+<div class="page container">
+  <header class="search-head">
+    <span class="eyebrow">Search</span>
+    @if (keyword()) {
+      <h1>Results for &ldquo;{{ keyword() }}&rdquo;</h1>
+      <p class="muted">
+        {{ total() }} {{ total() === 1 ? 'article' : 'articles' }} found
+        <button type="button" class="link-button" (click)="clear()">Clear search</button>
+      </p>
+    } @else {
+      <h1>Find an article</h1>
+      <p class="muted">Search by title, description or tag.</p>
+    }
+
+    <form class="search-form" (ngSubmit)="submit()">
+      <svg class="icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <circle cx="11" cy="11" r="7" />
+        <path d="m20 20-3.5-3.5" />
+      </svg>
+      <input
+        type="search"
+        name="q"
+        placeholder="inheritance, singleton, spring security..."
+        aria-label="Search articles"
+        [ngModel]="draftKeyword()"
+        (ngModelChange)="draftKeyword.set($event)"
+      />
+      <button type="submit" class="btn" [disabled]="draftKeyword().trim().length < 2">Search</button>
+    </form>
+  </header>
+
+  @if (loading()) {
+    <app-loading message="Searching..." />
+  } @else if (errorMessage()) {
+    <app-empty-state title="Search failed" [description]="errorMessage()" icon="!" />
+  } @else if (keyword().length === 1) {
+    <app-empty-state
+      title="Keyword too short"
+      description="Type at least two characters to search."
+    />
+  } @else if (searched() && results().length === 0) {
+    <app-empty-state
+      title="No matching articles"
+      description="Try another keyword, for example inheritance, singleton or spring."
+    />
+  } @else if (results().length > 0) {
+    <div class="article-grid">
+      @for (article of results(); track article.id) {
+        <app-article-card [article]="article" />
+      }
+    </div>
+
+    @if (totalPages() > 1) {
+      <nav class="pagination">
+        <button type="button" class="btn btn-secondary btn-sm" [disabled]="page() === 0" (click)="goToPage(page() - 1)">
+          Previous
+        </button>
+        <span class="muted">Page {{ page() + 1 }} of {{ totalPages() }}</span>
+        <button
+          type="button"
+          class="btn btn-secondary btn-sm"
+          [disabled]="page() + 1 >= totalPages()"
+          (click)="goToPage(page() + 1)"
+        >
+          Next
+        </button>
+      </nav>
+    }
+  }
+</div>

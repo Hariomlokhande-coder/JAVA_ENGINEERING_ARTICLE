@@ -1,0 +1,82 @@
+<div class="editor-shell" [class.dragging]="dragging()">
+  <div class="toolbar" role="toolbar" aria-label="Formatting">
+    <button type="button" title="Normal text" (click)="paragraph()">Text</button>
+    <button type="button" title="Heading" (click)="heading(2)"><strong>H2</strong></button>
+    <button type="button" title="Sub heading" (click)="heading(3)"><strong>H3</strong></button>
+
+    <span class="divider" aria-hidden="true"></span>
+
+    <button type="button" title="Bold (Ctrl+B)" (click)="bold()"><strong>B</strong></button>
+    <button type="button" title="Italic (Ctrl+I)" (click)="italic()"><em>I</em></button>
+
+    <span class="divider" aria-hidden="true"></span>
+
+    <button type="button" title="Insert link (Ctrl+K)" (click)="insertLink()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.5 1.5" />
+        <path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7L12 19" />
+      </svg>
+    </button>
+
+    <button type="button" title="Upload an image" (click)="imageInput.click()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="3" y="4" width="18" height="16" rx="2" />
+        <circle cx="8.5" cy="9.5" r="1.5" />
+        <path d="m21 16-5-5L5 20" />
+      </svg>
+    </button>
+
+    <button type="button" title="Image from a web address" (click)="insertImageUrl()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="3" y="4" width="18" height="16" rx="2" />
+        <path d="M8 12h8M12 8v8" />
+      </svg>
+    </button>
+
+    <span class="divider" aria-hidden="true"></span>
+
+    <button type="button" title="Bullet list" (click)="bulletList()">&bull;</button>
+    <button type="button" title="Numbered list" (click)="numberedList()">1.</button>
+    <button type="button" title="Quote" (click)="quote()">&rdquo;</button>
+    <button type="button" title="Code block" (click)="codeBlock()">&lt;/&gt;</button>
+
+    @if (uploading() > 0) {
+      <span class="uploading">
+        <span class="btn-spinner" aria-hidden="true"></span>
+        Uploading...
+      </span>
+    }
+  </div>
+
+  <div
+    #surface
+    class="surface"
+    contenteditable="true"
+    role="textbox"
+    aria-multiline="true"
+    aria-label="Article content"
+    spellcheck="true"
+    data-placeholder="Start writing. Paste a screenshot anywhere and it appears right here."
+    (input)="onInput()"
+    (blur)="onBlur()"
+    (keydown)="onKeydown($event)"
+    (paste)="onPaste($event)"
+    (dragover)="onDragOver($event)"
+    (dragleave)="onDragLeave()"
+    (drop)="onDrop($event)"
+  ></div>
+
+  <input #imageInput type="file" accept="image/png,image/jpeg,image/gif,image/webp" hidden
+         (change)="onFilePicked($event)" />
+
+  @if (dragging()) {
+    <div class="drop-hint" aria-hidden="true">Drop the image here</div>
+  }
+</div>
+
+@if (uploadError()) {
+  <p class="upload-error">{{ uploadError() }}</p>
+}

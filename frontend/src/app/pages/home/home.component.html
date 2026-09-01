@@ -1,0 +1,89 @@
+<div class="page-shell">
+  <div class="panel">
+    <header class="panel-head">
+      <div class="titles">
+        <h1>A growing collection of everything I learn</h1>
+        <p class="lead">
+          From Java and Spring Boot to backend development, databases, and system design.
+          Updated as I learn, build, and improve.
+        </p>
+      </div>
+
+      @if (!loading() && hasPublishedArticles()) {
+        <button type="button" class="btn random" (click)="openRandomArticle()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5" />
+          </svg>
+          Random article
+        </button>
+      }
+    </header>
+
+    @if (!loading() && totalTopics() > 0) {
+      <div class="progress">
+        <div
+          class="progress-bar"
+          role="progressbar"
+          [attr.aria-valuenow]="progressPercent()"
+          aria-valuemin="0"
+          aria-valuemax="100"
+        >
+          <span class="progress-fill" [style.width.%]="progressPercent()"></span>
+        </div>
+        <div class="progress-foot">
+          <span>{{ completedTopics() }} / {{ totalTopics() }}</span>
+          <span>{{ progressPercent() }} % Complete</span>
+        </div>
+      </div>
+    }
+
+    @if (loading()) {
+      <app-loading message="Loading the roadmap..." />
+    } @else if (errorMessage()) {
+      <app-empty-state title="The roadmap could not be loaded" [description]="errorMessage()" icon="!">
+        <button type="button" class="btn" (click)="load()">Try again</button>
+      </app-empty-state>
+    } @else if (sections().length === 0) {
+      <app-empty-state
+        title="No categories yet"
+        description="Sign in as admin and create the first category to start the roadmap."
+      />
+    } @else {
+      <div class="expand-row">
+        <button type="button" class="expand-all" (click)="toggleAll()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            @if (allExpanded()) {
+              <path d="m7 15 5-5 5 5M7 9l5-5 5 5" />
+            } @else {
+              <path d="m7 9 5 5 5-5M7 15l5 5 5-5" />
+            }
+          </svg>
+          {{ allExpanded() ? 'Collapse All' : 'Expand All' }}
+        </button>
+      </div>
+
+      <div class="sections">
+        @for (section of sections(); track section.id) {
+          <app-roadmap-section
+            [section]="section"
+            [expanded]="isOpen(section.id)"
+            (toggled)="toggleSection($event)"
+          />
+        }
+      </div>
+    }
+  </div>
+
+  @if (latestArticles().length > 0) {
+    <div class="panel">
+      <h2 class="panel-title">Latest articles</h2>
+      <div class="article-grid">
+        @for (article of latestArticles(); track article.id) {
+          <app-article-card [article]="article" />
+        }
+      </div>
+    </div>
+  }
+</div>

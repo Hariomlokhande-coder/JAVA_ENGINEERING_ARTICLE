@@ -1,0 +1,38 @@
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--s-8) var(--s-5);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+}
+
+.icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-bottom: var(--s-4);
+  border-radius: var(--r-full);
+  background: var(--surface-3);
+  color: var(--text-3);
+  font-family: var(--font-ui);
+  font-size: var(--t-lg);
+  font-weight: 700;
+}
+
+.empty-state h3 {
+  font-size: var(--t-lg);
+}
+
+.empty-state p {
+  max-width: 34rem;
+  margin-top: var(--s-2);
+  font-size: var(--t-base);
+}
+
+.empty-state ::ng-deep .btn {
+  margin-top: var(--s-5);
+}

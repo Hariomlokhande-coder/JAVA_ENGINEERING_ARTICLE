@@ -1,0 +1,172 @@
+<div class="page container">
+  <header class="head">
+    <a class="back" routerLink="/admin/dashboard">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M19 12H5m6-6-6 6 6 6" />
+      </svg>
+      Dashboard
+    </a>
+    <h1>{{ isEditMode() ? 'Edit article' : 'Create article' }}</h1>
+  </header>
+
+  @if (errorMessage()) {
+    <div class="alert alert-error">{{ errorMessage() }}</div>
+  }
+
+  @if (loading()) {
+    <app-loading message="Loading form..." />
+  } @else if (categories().length === 0) {
+    <div class="alert alert-error">
+      There are no categories yet. <a routerLink="/admin/categories">Create a category</a> before adding an article.
+    </div>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <div class="layout">
+        <section class="main card">
+          <div class="field">
+            <div class="label-row">
+              <label for="title">Title</label>
+              <span class="counter" [class.near-limit]="titleLength() > 180">{{ titleLength() }}/200</span>
+            </div>
+            <input id="title" type="text" formControlName="title" [class.invalid]="hasError('title')" />
+            @if (hasError('title')) {
+              <span class="error">A title of at most 200 characters is required.</span>
+            }
+          </div>
+
+          <div class="field">
+            <div class="label-row">
+              <label for="description">Description</label>
+              <span class="counter" [class.near-limit]="descriptionLength() > 450">
+                {{ descriptionLength() }}/500
+              </span>
+            </div>
+            <textarea id="description" rows="2" formControlName="description"></textarea>
+            <span class="hint">Shown on cards and in search results.</span>
+            @if (hasError('description')) {
+              <span class="error">The description must be at most 500 characters.</span>
+            }
+          </div>
+
+          <div class="field">
+            <div class="label-row">
+              <span class="editor-label">Article content</span>
+              <button type="button" class="btn btn-secondary btn-sm" (click)="togglePreview()">
+                {{ showPreview() ? 'Hide preview' : 'Preview' }}
+              </button>
+            </div>
+            <app-rich-editor formControlName="content" />
+            @if (hasError('content')) {
+              <span class="error">The article content is required.</span>
+            }
+          </div>
+
+          @if (showPreview() && preview(); as output) {
+            <div class="preview">
+              <h2>Preview</h2>
+              <app-markdown [html]="output.html" />
+            </div>
+          }
+        </section>
+
+        <aside class="side">
+          <section class="card panel">
+            <h2>Publishing</h2>
+
+            <div class="field">
+              <label for="categoryId">Category</label>
+              <select id="categoryId" formControlName="categoryId" [class.invalid]="hasError('categoryId')">
+                @for (category of categories(); track category.id) {
+                  <option [ngValue]="category.id">{{ category.name }}</option>
+                }
+              </select>
+              @if (hasError('categoryId')) {
+                <span class="error">Choose a category.</span>
+              }
+            </div>
+
+            <div class="field">
+              <label for="displayOrder">Display order</label>
+              <input id="displayOrder" type="number" min="0" formControlName="displayOrder" />
+              <span class="hint">Position inside the roadmap section.</span>
+            </div>
+
+            <div class="field">
+              <label for="slug">Slug</label>
+              <input id="slug" type="text" formControlName="slug" placeholder="generated from the title" />
+              @if (slugPreview()) {
+                <span class="hint slug-preview">/article/<strong>{{ slugPreview() }}</strong></span>
+              }
+              @if (hasError('slug')) {
+                <span class="error">Use lowercase letters, numbers and hyphens only.</span>
+              }
+            </div>
+
+            <div class="field">
+              <label for="difficulty">Difficulty</label>
+              <select id="difficulty" formControlName="difficulty">
+                <option value="EASY">Easy</option>
+                <option value="MEDIUM">Medium</option>
+                <option value="HARD">Hard</option>
+              </select>
+              <span class="hint">Shown as a coloured pill in the roadmap table.</span>
+            </div>
+
+            <div class="checkbox-field">
+              <input id="published" type="checkbox" formControlName="published" />
+              <label for="published">Published</label>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn" [disabled]="saving()">
+                @if (saving()) {
+                  <span class="btn-spinner" aria-hidden="true"></span>
+                  Saving...
+                } @else {
+                  {{ isEditMode() ? 'Update article' : 'Create article' }}
+                }
+              </button>
+              <a class="btn btn-secondary" routerLink="/admin/dashboard">Cancel</a>
+            </div>
+          </section>
+
+          <section class="card panel">
+            <h2>Links and tags</h2>
+
+            <div class="field">
+              <label for="githubUrl">GitHub URL</label>
+              <input id="githubUrl" type="url" formControlName="githubUrl" placeholder="https://github.com/..." />
+              @if (hasError('githubUrl')) {
+                <span class="error">Enter a URL starting with http:// or https://</span>
+              }
+            </div>
+
+            <div class="field">
+              <label for="youtubeUrl">YouTube URL</label>
+              <input id="youtubeUrl" type="url" formControlName="youtubeUrl" placeholder="https://youtube.com/..." />
+              @if (hasError('youtubeUrl')) {
+                <span class="error">Enter a URL starting with http:// or https://</span>
+              }
+            </div>
+
+            <div class="field">
+              <label for="tags">Tags</label>
+              <input id="tags" type="text" formControlName="tags" placeholder="java, oop, inheritance" />
+              <span class="hint">Comma separated, at most 15 tags.</span>
+            </div>
+
+            @if (knownTags().length > 0) {
+              <div class="tag-suggestions">
+                @for (tag of knownTags().slice(0, 12); track tag) {
+                  <button type="button" class="badge badge-muted tag-button" (click)="addTag(tag)">+ {{ tag }}</button>
+                }
+              </div>
+            }
+          </section>
+
+        </aside>
+      </div>
+    </form>
+  }
+</div>

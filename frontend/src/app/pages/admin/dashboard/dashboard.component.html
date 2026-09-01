@@ -1,0 +1,133 @@
+<div class="page container">
+  <header class="dashboard-head">
+    <div>
+      <span class="eyebrow">Admin</span>
+      <h1>Dashboard</h1>
+      <p class="muted">Create, edit and publish articles.</p>
+    </div>
+    <div class="head-actions">
+      <a class="btn" routerLink="/admin/articles/create">Create article</a>
+      <a class="btn btn-secondary" routerLink="/admin/categories">Manage categories</a>
+    </div>
+  </header>
+
+  <div class="stats">
+    <div class="stat">
+      <span class="stat-label">Articles</span>
+      <span class="value">{{ totalArticles() }}</span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">Categories</span>
+      <span class="value">{{ totalCategories() }}</span>
+    </div>
+  </div>
+
+  @if (successMessage()) {
+    <div class="alert alert-success">{{ successMessage() }}</div>
+  }
+  @if (errorMessage()) {
+    <div class="alert alert-error">{{ errorMessage() }}</div>
+  }
+
+  <form class="filter" (ngSubmit)="applySearch()">
+    <input
+      type="search"
+      name="keyword"
+      placeholder="Filter by title or slug"
+      aria-label="Filter articles"
+      [ngModel]="keyword()"
+      (ngModelChange)="keyword.set($event)"
+    />
+    <button type="submit" class="btn btn-sm">Filter</button>
+    @if (keyword()) {
+      <button type="button" class="btn btn-secondary btn-sm" (click)="clearSearch()">Clear</button>
+    }
+  </form>
+
+  @if (loading()) {
+    <app-loading message="Loading articles..." />
+  } @else if (articles().length === 0) {
+    <app-empty-state
+      title="No articles found"
+      description="Create your first article to see it listed here."
+    >
+      <a class="btn" routerLink="/admin/articles/create">Create article</a>
+    </app-empty-state>
+  } @else {
+    <div class="table-wrapper card">
+      <table>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Status</th>
+            <th>Updated</th>
+            <th class="actions-col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (article of articles(); track article.id) {
+            <tr>
+              <td>
+                <a [routerLink]="['/article', article.slug]" class="title-link">{{ article.title }}</a>
+                <span class="slug muted">/{{ article.slug }}</span>
+              </td>
+              <td>{{ article.categoryName }}</td>
+              <td>
+                <button
+                  type="button"
+                  class="status"
+                  [class.draft]="!article.published"
+                  [disabled]="togglingId() === article.id"
+                  (click)="togglePublished(article)"
+                  [attr.title]="article.published ? 'Click to unpublish' : 'Click to publish'"
+                >
+                  @if (togglingId() === article.id) {
+                    <span class="btn-spinner status-spinner" aria-hidden="true"></span>
+                  } @else {
+                    <span class="dot" aria-hidden="true"></span>
+                  }
+                  {{ article.published ? 'Published' : 'Draft' }}
+                </button>
+              </td>
+              <td class="muted">{{ article.updatedAt | date: 'mediumDate' }}</td>
+              <td class="actions-col">
+                <a class="btn btn-secondary btn-sm" [routerLink]="['/admin/articles/edit', article.id]">Edit</a>
+                <button
+                  type="button"
+                  class="btn btn-danger btn-sm"
+                  [disabled]="deletingId() === article.id"
+                  (click)="remove(article)"
+                >
+                  @if (deletingId() === article.id) {
+                    <span class="btn-spinner" aria-hidden="true"></span>
+                    Deleting...
+                  } @else {
+                    Delete
+                  }
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    @if (totalPages() > 1) {
+      <nav class="pagination">
+        <button type="button" class="btn btn-secondary btn-sm" [disabled]="page() === 0" (click)="goToPage(page() - 1)">
+          Previous
+        </button>
+        <span class="muted">Page {{ page() + 1 }} of {{ totalPages() }}</span>
+        <button
+          type="button"
+          class="btn btn-secondary btn-sm"
+          [disabled]="page() + 1 >= totalPages()"
+          (click)="goToPage(page() + 1)"
+        >
+          Next
+        </button>
+      </nav>
+    }
+  }
+</div>

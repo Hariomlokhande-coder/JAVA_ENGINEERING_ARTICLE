@@ -1,0 +1,33 @@
+@if (request(); as dialog) {
+  <div class="backdrop" (click)="respond(false)">
+    <div
+      class="dialog"
+      role="alertdialog"
+      aria-modal="true"
+      aria-labelledby="confirm-title"
+      (click)="$event.stopPropagation()"
+    >
+      <span class="icon" [class.danger]="dialog.danger" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" />
+        </svg>
+      </span>
+
+      <h2 id="confirm-title">{{ dialog.title }}</h2>
+
+      @if (dialog.message) {
+        <p class="muted">{{ dialog.message }}</p>
+      }
+
+      <div class="actions">
+        <button #cancelButton type="button" class="btn btn-secondary" (click)="respond(false)">
+          {{ dialog.cancelLabel }}
+        </button>
+        <button type="button" class="btn" [class.btn-danger-solid]="dialog.danger" (click)="respond(true)">
+          {{ dialog.confirmLabel }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

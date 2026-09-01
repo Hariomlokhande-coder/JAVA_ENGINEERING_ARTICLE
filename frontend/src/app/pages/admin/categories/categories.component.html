@@ -1,0 +1,133 @@
+<div class="page container">
+  <header class="head">
+    <div>
+      <a class="back" routerLink="/admin/dashboard">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M19 12H5m6-6-6 6 6 6" />
+        </svg>
+        Dashboard
+      </a>
+      <h1>Categories</h1>
+      <p class="muted">Categories are the sections of the roadmap.</p>
+    </div>
+  </header>
+
+  @if (successMessage()) {
+    <div class="alert alert-success">{{ successMessage() }}</div>
+  }
+  @if (errorMessage()) {
+    <div class="alert alert-error">{{ errorMessage() }}</div>
+  }
+
+  <section class="card form-card">
+    <h2>{{ editingId() ? 'Edit category' : 'New category' }}</h2>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <div class="grid">
+        <div class="field">
+          <label for="name">Name</label>
+          <input id="name" type="text" formControlName="name" [class.invalid]="hasError('name')" />
+          @if (hasError('name')) {
+            <span class="error">A name of at most 120 characters is required.</span>
+          }
+        </div>
+
+        <div class="field">
+          <label for="slug">Slug</label>
+          <input id="slug" type="text" formControlName="slug" placeholder="generated from the name" />
+          <span class="hint">Lowercase letters, numbers and hyphens. Leave empty to generate it.</span>
+          @if (hasError('slug')) {
+            <span class="error">Use lowercase letters, numbers and hyphens only.</span>
+          }
+        </div>
+
+        <div class="field">
+          <label for="displayOrder">Display order</label>
+          <input id="displayOrder" type="number" min="0" formControlName="displayOrder" />
+          @if (hasError('displayOrder')) {
+            <span class="error">Enter zero or a positive number.</span>
+          }
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="description">Description</label>
+        <textarea id="description" rows="2" formControlName="description"></textarea>
+        @if (hasError('description')) {
+          <span class="error">The description must be at most 500 characters.</span>
+        }
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn" [disabled]="saving()">
+          @if (saving()) {
+            <span class="btn-spinner" aria-hidden="true"></span>
+            Saving...
+          } @else {
+            {{ editingId() ? 'Update category' : 'Create category' }}
+          }
+        </button>
+        @if (editingId()) {
+          <button type="button" class="btn btn-secondary" (click)="resetForm()">Cancel</button>
+        }
+      </div>
+    </form>
+  </section>
+
+  @if (loading()) {
+    <app-loading message="Loading categories..." />
+  } @else if (categories().length === 0) {
+    <app-empty-state title="No categories yet" description="Create the first category using the form above." />
+  } @else {
+    <div class="table-wrapper card">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Slug</th>
+            <th>Order</th>
+            <th>Articles</th>
+            <th class="actions-col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (category of categories(); track category.id) {
+            <tr>
+              <td>
+                <span class="name">{{ category.name }}</span>
+                @if (category.description) {
+                  <span class="description muted">{{ category.description }}</span>
+                }
+              </td>
+              <td class="muted">{{ category.slug }}</td>
+              <td>{{ category.displayOrder }}</td>
+              <td>{{ category.articleCount }}</td>
+              <td class="actions-col">
+                <button type="button" class="btn btn-secondary btn-sm" (click)="edit(category)">Edit</button>
+                <button
+                  type="button"
+                  class="btn btn-danger btn-sm"
+                  [disabled]="deletingId() === category.id || category.articleCount > 0"
+                  [attr.title]="
+                    category.articleCount > 0
+                      ? 'Move or delete its articles first'
+                      : 'Delete this category'
+                  "
+                  (click)="remove(category)"
+                >
+                  @if (deletingId() === category.id) {
+                    <span class="btn-spinner" aria-hidden="true"></span>
+                    Deleting...
+                  } @else {
+                    Delete
+                  }
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

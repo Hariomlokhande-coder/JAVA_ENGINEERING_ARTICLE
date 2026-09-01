@@ -1,0 +1,139 @@
+<div class="page-shell">
+  @if (loading()) {
+    <div class="card"><app-loading message="Loading article..." /></div>
+  } @else if (errorMessage()) {
+    <div class="card">
+      <app-empty-state title="Article not available" [description]="errorMessage()" icon="!">
+        <a class="btn" routerLink="/">Back to roadmap</a>
+      </app-empty-state>
+    </div>
+  } @else {
+    @if (article(); as current) {
+      <article class="card">
+        <nav class="crumbs" aria-label="Breadcrumb">
+          <a routerLink="/">Roadmap</a>
+          <span aria-hidden="true">/</span>
+          <a [routerLink]="['/category', current.categorySlug]">{{ current.categoryName }}</a>
+        </nav>
+
+        <h1>{{ current.title }}</h1>
+
+        <div class="meta">
+          <span class="level" [class]="'level-' + current.difficulty.toLowerCase()">
+            {{ current.difficulty | titlecase }}
+          </span>
+          <span>{{ readingMinutes() }} min read</span>
+          <span class="dot" aria-hidden="true"></span>
+          <time [attr.datetime]="current.updatedAt">Updated {{ current.updatedAt | date: 'mediumDate' }}</time>
+          @if (!current.published) {
+            <span class="badge badge-warning">Draft</span>
+          }
+        </div>
+
+        <!-- The video sits right under the title, as on the reference site -->
+        @if (videoEmbedUrl(); as embed) {
+          <div class="video">
+            <iframe
+              [src]="embed"
+              title="Video for this topic"
+              loading="lazy"
+              allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen
+            ></iframe>
+          </div>
+        } @else if (thumbnail()) {
+          <img class="cover" [src]="thumbnail()" [alt]="current.title" />
+        }
+
+        @if (current.tags.length > 0) {
+          <div class="tag-row">
+            <strong>Topic Tags:</strong>
+            <ul>
+              @for (tag of current.tags; track tag) {
+                <li><a class="tag" [routerLink]="['/search']" [queryParams]="{ q: tag }">{{ tag }}</a></li>
+              }
+            </ul>
+          </div>
+        }
+
+        @if (current.githubUrl) {
+          <p class="github-row">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.53 2.34 1.09 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.56-1.11-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.6 9.6 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.69-4.57 4.94.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2Z" />
+            </svg>
+            <span class="label">GitHub Codes Link:</span>
+            <a [href]="current.githubUrl" target="_blank" rel="noopener noreferrer">{{ current.githubUrl }}</a>
+          </p>
+        }
+
+        @if (current.description) {
+          <p class="lead">{{ current.description }}</p>
+        }
+
+        @if (rendered(); as output) {
+          <app-markdown [html]="output.html" />
+        }
+
+        <div class="foot-actions">
+          <button type="button" class="btn" [class.btn-secondary]="isCompleted()" (click)="toggleCompleted()">
+            @if (isCompleted()) {
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                   stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="m4 12 5.5 5.5L20 7" />
+              </svg>
+              Marked as read
+            } @else {
+              Mark as read
+            }
+          </button>
+
+          <button type="button" class="btn btn-secondary" (click)="copyLink()">
+            {{ linkCopied() ? 'Link copied' : 'Copy link' }}
+          </button>
+        </div>
+
+        @if (previousArticle() || nextArticle()) {
+          <nav class="neighbours" aria-label="Article navigation">
+            @if (previousArticle(); as previous) {
+              <a class="neighbour prev" [routerLink]="['/article', previous.slug]">
+                <span class="direction">Previous</span>
+                <span class="neighbour-title">{{ previous.title }}</span>
+              </a>
+            } @else {
+              <span></span>
+            }
+
+            @if (nextArticle(); as next) {
+              <a class="neighbour next" [routerLink]="['/article', next.slug]">
+                <span class="direction">Next</span>
+                <span class="neighbour-title">{{ next.title }}</span>
+              </a>
+            }
+          </nav>
+        }
+      </article>
+
+      @if (related().length > 0) {
+        <section class="card related">
+          <h2 class="related-title">Related articles</h2>
+          <div class="article-grid">
+            @for (item of related(); track item.id) {
+              <app-article-card [article]="item" />
+            }
+          </div>
+        </section>
+      }
+
+      <!-- Reading indicators, fixed to the viewport -->
+      <span class="read-pill">{{ readProgress() }}% read</span>
+
+      <div class="read-bar" aria-hidden="true">
+        <span class="read-bar-fill" [style.width.%]="readProgress()"></span>
+      </div>
+
+      @if (reachedEnd()) {
+        <div class="end-toast" role="status">You have reached the end</div>
+      }
+    }
+  }
+</div>

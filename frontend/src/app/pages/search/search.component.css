@@ -1,0 +1,74 @@
+.search-head {
+  max-width: var(--w-prose);
+  margin-bottom: var(--s-6);
+}
+
+.search-head h1 {
+  margin: var(--s-2) 0 var(--s-3);
+  font-size: var(--t-2xl);
+  letter-spacing: -0.025em;
+}
+
+.search-head p {
+  font-size: var(--t-base);
+}
+
+.link-button {
+  margin-left: var(--s-3);
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--accent);
+  font: inherit;
+  font-size: var(--t-base);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-4);
+  margin-top: var(--s-7);
+  font-size: var(--t-sm);
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.search-form {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  margin-top: var(--s-5);
+}
+
+.search-form .icon {
+  position: absolute;
+  left: 0.85rem;
+  color: var(--text-3);
+  pointer-events: none;
+}
+
+.search-form input {
+  flex: 1;
+  padding: 0.65rem 0.9rem 0.65rem 2.5rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  color: var(--text);
+  font-family: inherit;
+  font-size: var(--t-md);
+}
+
+.search-form input::placeholder {
+  color: var(--text-3);
+}
+
+.search-form input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: var(--ring);
+}

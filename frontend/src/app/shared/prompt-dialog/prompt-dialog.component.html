@@ -1,0 +1,37 @@
+@if (request(); as dialog) {
+  <div class="backdrop" (click)="cancel()">
+    <form class="dialog" role="dialog" aria-modal="true" aria-labelledby="prompt-title"
+          (click)="$event.stopPropagation()" (submit)="$event.preventDefault(); submit()">
+      <h2 id="prompt-title">{{ dialog.title }}</h2>
+
+      @for (field of dialog.fields; track field.name; let first = $first) {
+        <div class="field">
+          <label [attr.for]="'prompt-' + field.name">{{ field.label }}</label>
+          @if (first) {
+            <input
+              #firstInput
+              [id]="'prompt-' + field.name"
+              type="text"
+              [value]="values[field.name]"
+              [attr.placeholder]="field.placeholder ?? ''"
+              (input)="update(field.name, $any($event.target).value)"
+            />
+          } @else {
+            <input
+              [id]="'prompt-' + field.name"
+              type="text"
+              [value]="values[field.name]"
+              [attr.placeholder]="field.placeholder ?? ''"
+              (input)="update(field.name, $any($event.target).value)"
+            />
+          }
+        </div>
+      }
+
+      <div class="actions">
+        <button type="button" class="btn btn-secondary" (click)="cancel()">Cancel</button>
+        <button type="submit" class="btn">{{ dialog.confirmLabel }}</button>
+      </div>
+    </form>
+  </div>
+}

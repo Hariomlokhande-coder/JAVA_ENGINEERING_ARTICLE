@@ -38,6 +38,25 @@ export const routes: Routes = [
     title: 'Create an account'
   },
   {
+    path: 'verify-email',
+    loadComponent: () =>
+      import('./pages/auth/verify-email/verify-email.component').then((m) => m.VerifyEmailComponent),
+    title: 'Confirm your email'
+  },
+  {
+    path: 'forgot-password',
+    canActivate: [loginRedirectGuard],
+    loadComponent: () =>
+      import('./pages/auth/forgot-password/forgot-password.component').then((m) => m.ForgotPasswordComponent),
+    title: 'Forgot password'
+  },
+  {
+    path: 'reset-password',
+    loadComponent: () =>
+      import('./pages/auth/reset-password/reset-password.component').then((m) => m.ResetPasswordComponent),
+    title: 'Choose a new password'
+  },
+  {
     path: 'admin/login',
     pathMatch: 'full',
     redirectTo: 'login'

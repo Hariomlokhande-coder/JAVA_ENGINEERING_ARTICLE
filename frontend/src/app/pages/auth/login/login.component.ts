@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { toErrorMessage } from '../../../core/error-message';
@@ -27,6 +28,9 @@ export class LoginComponent {
   readonly capsLockOn = signal(false);
   readonly errorMessage = signal('');
   readonly sessionExpired = signal(this.route.snapshot.queryParamMap.get('reason') === 'expired');
+  readonly passwordChanged = signal(this.route.snapshot.queryParamMap.get('reason') === 'password-changed');
+  readonly needsVerification = signal(false);
+  readonly resendMessage = signal('');
 
   readonly form = this.formBuilder.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
@@ -42,6 +46,8 @@ export class LoginComponent {
     this.submitting.set(true);
     this.errorMessage.set('');
     this.sessionExpired.set(false);
+    this.passwordChanged.set(false);
+    this.needsVerification.set(false);
     const startedAt = Date.now();
 
     this.authService.login(this.form.getRawValue()).subscribe({
@@ -57,9 +63,22 @@ export class LoginComponent {
       error: (error: unknown) => {
         this.afterMinimumSpin(startedAt, () => {
           this.submitting.set(false);
+          // 403 here means the password was right but the address is unconfirmed.
+          this.needsVerification.set(error instanceof HttpErrorResponse && error.status === 403);
           this.errorMessage.set(toErrorMessage(error, 'Sign in failed. Please try again.'));
         });
       }
+    });
+  }
+
+  resendVerification(): void {
+    const email = this.form.controls.email.value.trim();
+    if (!email) {
+      return;
+    }
+    this.authService.resendVerification(email).subscribe({
+      next: (response) => this.resendMessage.set(response.message),
+      error: () => this.resendMessage.set('Could not send the link. Please try again in a moment.')
     });
   }
 

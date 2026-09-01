@@ -50,3 +50,18 @@
   text-align: center;
   font-size: var(--t-base);
 }
+
+.resend {
+  margin: calc(-1 * var(--s-3)) 0 var(--s-4);
+  font-size: var(--t-base);
+}
+
+.link-button {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--accent);
+  font: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+}

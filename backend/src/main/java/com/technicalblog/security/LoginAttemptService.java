@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -52,6 +53,15 @@ public class LoginAttemptService {
 
     public void recordSuccess(String clientKey) {
         attemptsByClient.remove(clientKey);
+    }
+
+    /**
+     * Clears every entry for one address, whichever IP it was tried from.
+     * Used after a password reset so the owner is not left locked out.
+     */
+    public void clearFor(String email) {
+        String prefix = email.toLowerCase(Locale.ENGLISH) + "|";
+        attemptsByClient.keySet().removeIf(key -> key.startsWith(prefix));
     }
 
     /** Keeps the map bounded so a flood of unique clients cannot grow it without limit. */

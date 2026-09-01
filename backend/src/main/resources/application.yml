@@ -35,6 +35,12 @@ server:
     include-stacktrace: never
 
 app:
+  # Where the email links should point
+  frontend-url: ${FRONTEND_URL:http://localhost:4200}
+
+  mail:
+    from: ${MAIL_FROM:no-reply@technical-blog.local}
+
   jwt:
     # Must be at least 32 characters. Override in production with the JWT_SECRET env variable.
     secret: ${JWT_SECRET:change-this-development-secret-key-min-32-chars}

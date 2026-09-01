@@ -1,0 +1,76 @@
+.page-shell {
+  display: flex;
+  justify-content: center;
+  padding: var(--s-8) var(--s-4);
+  background: var(--page-gradient);
+  min-height: 70vh;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 27rem;
+  height: fit-content;
+  padding: var(--s-6);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  box-shadow: var(--edge-highlight), var(--shadow-lg);
+  text-align: center;
+}
+
+.mark,
+.big {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  margin: 0 auto var(--s-4);
+  border-radius: var(--r-full);
+}
+
+.mark.ok {
+  background: var(--green-soft);
+  color: var(--green);
+}
+
+.mark.bad {
+  background: var(--red-soft);
+  color: var(--red);
+}
+
+.big {
+  width: 26px;
+  height: 26px;
+  border-width: 3px;
+  color: var(--accent);
+}
+
+.auth-card h1 {
+  font-size: var(--t-xl);
+}
+
+.auth-card p {
+  margin: var(--s-2) 0 var(--s-5);
+  font-size: var(--t-base);
+  line-height: 1.55;
+}
+
+/* Forms inside these cards read left aligned */
+.auth-card.left {
+  text-align: left;
+}
+
+.auth-card.left .mark {
+  margin-left: 0;
+}
+
+.full {
+  width: 100%;
+  padding-block: 0.7rem;
+}
+
+.foot {
+  margin-top: var(--s-5);
+  text-align: center;
+  font-size: var(--t-base);
+}

@@ -1,0 +1,30 @@
+<div class="page-shell">
+  <div class="auth-card">
+    @if (state() === 'checking') {
+      <span class="btn-spinner big" aria-hidden="true"></span>
+      <h1>Confirming your email</h1>
+      <p class="muted">One moment.</p>
+    } @else if (state() === 'done') {
+      <span class="mark ok" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+             stroke-linecap="round" stroke-linejoin="round">
+          <path d="m4 12 5.5 5.5L20 7" />
+        </svg>
+      </span>
+      <h1>Email confirmed</h1>
+      <p class="muted">{{ message() }}</p>
+      <a class="btn" routerLink="/login">Sign in</a>
+    } @else {
+      <span class="mark bad" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+             stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 8v5m0 4h.01" />
+          <circle cx="12" cy="12" r="9" />
+        </svg>
+      </span>
+      <h1>Link not valid</h1>
+      <p class="muted">{{ message() }}</p>
+      <a class="btn btn-secondary" routerLink="/login">Back to sign in</a>
+    }
+  </div>
+</div>

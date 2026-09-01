@@ -74,7 +74,9 @@ public class SecurityConfig {
                         .accessDeniedHandler(accessDeniedHandler))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
+                        .requestMatchers("/api/auth/login", "/api/auth/register", "/api/auth/verify-email",
+                                "/api/auth/resend-verification", "/api/auth/forgot-password",
+                                "/api/auth/reset-password").permitAll()
                         // Reader progress: any signed in account, admin rights not required
                         .requestMatchers("/api/me/**").authenticated()
                         .requestMatchers("/uploads/**", "/actuator/health").permitAll()

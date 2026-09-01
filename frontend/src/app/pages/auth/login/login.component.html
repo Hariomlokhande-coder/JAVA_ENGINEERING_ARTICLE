@@ -14,8 +14,22 @@
       <div class="alert alert-error">Your session expired. Please sign in again.</div>
     }
 
+    @if (passwordChanged()) {
+      <div class="alert alert-success">Your password has been changed. Sign in with the new one.</div>
+    }
+
     @if (errorMessage()) {
       <div class="alert alert-error">{{ errorMessage() }}</div>
+    }
+
+    @if (needsVerification()) {
+      <p class="resend">
+        <button type="button" class="link-button" (click)="resendVerification()">Send the link again</button>
+      </p>
+    }
+
+    @if (resendMessage()) {
+      <div class="alert alert-success">{{ resendMessage() }}</div>
     }
 
     <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
@@ -87,6 +101,9 @@
       </button>
     </form>
 
+    <p class="foot muted">
+      <a routerLink="/forgot-password">Forgot your password?</a>
+    </p>
     <p class="foot muted">New here? <a routerLink="/register">Create an account</a></p>
   </div>
 </div>

@@ -9,6 +9,11 @@
       </svg>
     </span>
 
+    @if (sentMessage()) {
+      <h1>Check your email</h1>
+      <p class="intro muted">{{ sentMessage() }} The link is valid for 24 hours.</p>
+      <a class="btn btn-secondary auth-button" routerLink="/login">Back to sign in</a>
+    } @else {
     <h1>Create your account</h1>
     <p class="intro muted">
       Track which topics you have finished and star the ones you want to revisit.
@@ -83,5 +88,6 @@
     </form>
 
     <p class="foot muted">Already have an account? <a routerLink="/login">Sign in</a></p>
+    }
   </div>
 </div>

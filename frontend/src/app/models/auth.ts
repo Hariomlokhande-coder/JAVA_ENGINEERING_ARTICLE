@@ -27,6 +27,11 @@ export interface LoginResponse {
   expiresAt: string;
 }
 
+/** Plain confirmation returned by the account flows. */
+export interface MessageResponse {
+  message: string;
+}
+
 export interface AuthSession {
   token: string;
   role: Role;

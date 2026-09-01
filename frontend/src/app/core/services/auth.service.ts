@@ -1,9 +1,15 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, computed, signal } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { AuthSession, LoginPayload, LoginResponse, RegisterPayload } from '../../models/auth';
+import {
+  AuthSession,
+  LoginPayload,
+  LoginResponse,
+  MessageResponse,
+  RegisterPayload
+} from '../../models/auth';
 
 const STORAGE_KEY = 'technical-blog.session';
 
@@ -25,10 +31,26 @@ export class AuthService {
     );
   }
 
-  register(payload: RegisterPayload): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${environment.apiUrl}/auth/register`, payload).pipe(
-      tap((response) => this.storeSession(response))
-    );
+  /** Creates the account. The reader must confirm their email before signing in. */
+  register(payload: RegisterPayload): Observable<MessageResponse> {
+    return this.http.post<MessageResponse>(`${environment.apiUrl}/auth/register`, payload);
+  }
+
+  verifyEmail(token: string): Observable<MessageResponse> {
+    const params = new HttpParams().set('token', token);
+    return this.http.get<MessageResponse>(`${environment.apiUrl}/auth/verify-email`, { params });
+  }
+
+  resendVerification(email: string): Observable<MessageResponse> {
+    return this.http.post<MessageResponse>(`${environment.apiUrl}/auth/resend-verification`, { email });
+  }
+
+  forgotPassword(email: string): Observable<MessageResponse> {
+    return this.http.post<MessageResponse>(`${environment.apiUrl}/auth/forgot-password`, { email });
+  }
+
+  resetPassword(token: string, password: string): Observable<MessageResponse> {
+    return this.http.post<MessageResponse>(`${environment.apiUrl}/auth/reset-password`, { token, password });
   }
 
   logout(): void {

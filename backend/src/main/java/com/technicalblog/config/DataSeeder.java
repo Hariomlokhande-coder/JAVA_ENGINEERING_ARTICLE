@@ -68,6 +68,7 @@ public class DataSeeder implements CommandLineRunner {
                 .email(adminProperties.email())
                 .password(passwordEncoder.encode(adminProperties.password()))
                 .role(Role.ADMIN)
+                .emailVerified(true)
                 .build();
         userRepository.save(admin);
         log.info("Seeded ADMIN account {}. Change the password after the first login.", admin.getEmail());

@@ -41,10 +41,10 @@ public class User {
 
     /**
      * Readers must confirm their address before they can sign in.
-     * The default lets the column be added to a table that already has rows:
-     * accounts created before this feature stay usable.
+     * No database level default on purpose: every row has to say what it is,
+     * so a row inserted outside the application can never arrive pre-verified.
      */
-    @Column(name = "email_verified", nullable = false, columnDefinition = "boolean default true")
+    @Column(name = "email_verified", nullable = false)
     private boolean emailVerified;
 
     /**

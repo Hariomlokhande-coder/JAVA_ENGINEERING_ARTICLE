@@ -75,6 +75,23 @@ cd backend
 mvn spring-boot:run
 ```
 
+**Option C — PostgreSQL on another machine on the same network.** Copy
+`backend/run-local.ps1.example` to `backend/run-local.ps1`, fill in the values and run it.
+That file is git ignored, so the password stays off GitHub.
+
+On the machine running PostgreSQL, three things have to be true before it will accept a
+connection from another PC:
+
+| Where | Change |
+|-------|--------|
+| `postgresql.conf` | `listen_addresses = '*'` |
+| `pg_hba.conf`     | `host all all <your subnet>/24 scram-sha-256` |
+| Windows Firewall  | inbound TCP 5432, restricted to that subnet |
+
+Restart the PostgreSQL service afterwards. `netstat -ano | findstr ":5432"` should then show
+`0.0.0.0:5432` rather than only `127.0.0.1`. Give that PC a fixed address in the router, or the
+connection breaks the day DHCP hands it a different one.
+
 Either way the API starts on http://localhost:8080. Tables are created by Hibernate on first
 start, and the seeder adds the admin account plus the starter categories while the tables are
 still empty.
@@ -135,6 +152,8 @@ Base URL `http://localhost:8080/api`. Full reference with request and response b
 | Group      | Endpoints                                                                                          | Access        |
 |------------|----------------------------------------------------------------------------------------------------|---------------|
 | Auth       | `POST /auth/register`, `POST /auth/login`                                                           | Public        |
+|            | `GET /auth/verify-email`, `POST /auth/resend-verification`                                          | Public        |
+|            | `POST /auth/forgot-password`, `POST /auth/reset-password`                                           | Public        |
 |            | `GET /auth/me`                                                                                      | Authenticated |
 | Categories | `GET /categories`, `/categories/roadmap`, `/categories/{id}`, `/categories/slug/{slug}`             | Public        |
 |            | `POST`, `PUT`, `DELETE /categories/**`                                                              | ADMIN         |
@@ -163,7 +182,11 @@ Spring Security is the real protection; the Angular guards only keep the admin s
 - **Uploads** — the file signature must match the declared type, so a script cannot be stored
   behind an image name. SVG is rejected because it can carry script on this origin. Stored names
   are fresh UUIDs, which rules out path traversal.
-- **Passwords** — BCrypt strength 12.
+- **Passwords** — BCrypt strength 12. A completed reset ends every session that was opened
+  with the old password, and clears any brute force lockout.
+- **Account flows** — sign up, email verification and password reset answer the same way for a
+  known and an unknown address, so none of them can be used to discover who has an account.
+  Verification and reset tokens are stored as SHA-256 hashes, expire, and work once.
 - **Content** — Markdown is sanitized with DOMPurify before it is rendered.
 
 ---
@@ -212,11 +235,9 @@ Honest list of what is missing, roughly in priority order:
 
 - [ ] **Tests** — there are none, on either side
 - [ ] **Deployment** — no Dockerfile or hosting config; it runs locally only
-- [ ] **PostgreSQL path is untested** — development has run on H2
 - [ ] **Database migrations** — currently `ddl-auto=update`, which is risky in production
 - [ ] **Uploaded images are never deleted** — removing an article leaves its files on disk
 - [ ] **Admin cannot change their own password from the UI**
-- [ ] **No password reset and no email verification** for reader accounts
 - [ ] **Draft autosave** — a token expiring mid-write loses the draft
 - [ ] Table button missing in the visual editor; image alt text cannot be edited
 - [ ] `robots.txt`, `sitemap.xml`, RSS feed, `og:image` banner

@@ -21,7 +21,7 @@ public class SecurityStartupCheck implements ApplicationListener<ApplicationRead
     private static final Logger log = LoggerFactory.getLogger(SecurityStartupCheck.class);
     private static final String DEV_PROFILE = "dev";
     private static final String DEFAULT_SECRET = "change-this-development-secret-key-min-32-chars";
-    private static final List<String> WEAK_PASSWORDS = List.of("Admin@12345", "admin", "password", "changeme");
+    private static final List<String> WEAK_PASSWORDS = List.of("ChangeMe@12345", "Admin@12345", "admin", "password", "changeme");
 
     private final JwtProperties jwtProperties;
     private final AdminSeedProperties adminProperties;

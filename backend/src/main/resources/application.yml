@@ -29,7 +29,10 @@ spring:
     default-property-inclusion: non_null
 
 server:
-  port: ${SERVER_PORT:8080}
+  # Hosts such as Render hand the port over in PORT and expect the app to use it.
+  port: ${PORT:${SERVER_PORT:8080}}
+  # Behind a proxy that terminates TLS, trust its X-Forwarded-* headers.
+  forward-headers-strategy: framework
   error:
     include-message: never
     include-stacktrace: never

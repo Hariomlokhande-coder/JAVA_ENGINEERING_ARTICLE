@@ -1,8 +1,9 @@
 # Copy this file to run-local.ps1, fill in your own values, then run:  .\run-local.ps1
 # run-local.ps1 is git ignored, so your password never reaches GitHub.
 
-# ---- Database on the other machine ----------------------------------------
-# Replace the IP with the address of the PC running PostgreSQL (this is the PostgreSQL PC).
+# ---- Database --------------------------------------------------------------
+# On the PC that runs PostgreSQL itself, use localhost. From any other PC on the
+# same network, put that machine's address here instead.
 $env:DB_URL      = "jdbc:postgresql://192.168.1.2:5432/technical_blog"
 $env:DB_USERNAME = "postgres"
 $env:DB_PASSWORD = "PUT-THE-POSTGRES-PASSWORD-HERE"
@@ -13,15 +14,10 @@ $env:JWT_SECRET  = "PUT-A-LONG-PRIVATE-SENTENCE-AT-LEAST-32-CHARS"
 
 # ---- First admin account --------------------------------------------------
 # Only used the very first time, while the users table is still empty.
+# Once the account exists in the database, switch the seeder off:
+# $env:ADMIN_SEED_ENABLED = "false"
 $env:ADMIN_EMAIL    = "hariomlokhande3456@gmail.com"
 $env:ADMIN_PASSWORD = "PUT-YOUR-ADMIN-PASSWORD-HERE"
-
-# ---- Uploaded images ------------------------------------------------------
-# Images are written to disk, not to the database. To share them between both
-# machines, point this at the same shared folder from both PCs, for example:
-#   $env:UPLOAD_DIR = "\OTHER-PC-NAME\blog-uploads"
-# Leave it out to keep images on this machine only.
-# $env:UPLOAD_DIR = "\OTHER-PC-NAME\blog-uploads"
 
 Write-Host "Starting backend against $env:DB_URL" -ForegroundColor Cyan
 mvn spring-boot:run

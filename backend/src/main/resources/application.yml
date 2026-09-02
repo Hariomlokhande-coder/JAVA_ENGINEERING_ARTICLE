@@ -52,7 +52,7 @@ app:
     allowed-origins: ${CORS_ORIGINS:http://localhost:4200,http://localhost:4300}
 
   storage:
-    upload-dir: ${UPLOAD_DIR:uploads}
+    # Images are stored in the database, this only shapes the public URL.
     articles-folder: articles
     max-file-size-bytes: 5242880
     # SVG is deliberately excluded: it can carry script and would run on this origin.

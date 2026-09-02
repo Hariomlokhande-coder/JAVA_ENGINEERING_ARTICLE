@@ -2,25 +2,25 @@ package com.technicalblog.service;
 
 import com.technicalblog.config.StorageProperties;
 import com.technicalblog.dto.response.FileUploadResponse;
+import com.technicalblog.entity.StoredImage;
 import com.technicalblog.exception.FileStorageException;
 import com.technicalblog.exception.InvalidRequestException;
-import jakarta.annotation.PostConstruct;
+import com.technicalblog.exception.ResourceNotFoundException;
+import com.technicalblog.repository.StoredImageRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
 /**
- * Stores article images on the local disk and returns the public URL.
- * Only the extension of the original file name is kept, so a crafted name cannot escape the folder.
+ * Stores article images in the database and returns the public URL.
+ * The original file name is never used, only its format decides the extension,
+ * so a crafted name has nothing to attack.
  */
 @Service
 public class FileStorageService {
@@ -41,43 +41,42 @@ public class FileStorageService {
     private static final int SIGNATURE_LENGTH = 4;
 
     private final StorageProperties properties;
-    private Path articlesRoot;
+    private final StoredImageRepository images;
 
-    public FileStorageService(StorageProperties properties) {
+    public FileStorageService(StorageProperties properties, StoredImageRepository images) {
         this.properties = properties;
+        this.images = images;
     }
 
-    @PostConstruct
-    void createStorageDirectories() {
-        try {
-            this.articlesRoot = Paths.get(properties.uploadDir(), properties.articlesFolder())
-                    .toAbsolutePath()
-                    .normalize();
-            Files.createDirectories(articlesRoot);
-        } catch (IOException ex) {
-            throw new FileStorageException("Could not create the upload directory", ex);
-        }
-    }
-
+    @Transactional
     public FileUploadResponse store(MultipartFile file) {
         validate(file);
 
         String contentType = file.getContentType().toLowerCase(Locale.ENGLISH);
         String fileName = UUID.randomUUID() + EXTENSION_BY_TYPE.get(contentType);
-        Path target = articlesRoot.resolve(fileName).normalize();
 
-        if (!target.startsWith(articlesRoot)) {
-            throw new InvalidRequestException("Invalid file name");
-        }
-
+        byte[] bytes;
         try (InputStream inputStream = file.getInputStream()) {
-            Files.copy(inputStream, target, StandardCopyOption.REPLACE_EXISTING);
+            bytes = inputStream.readAllBytes();
         } catch (IOException ex) {
-            throw new FileStorageException("Could not store the uploaded file", ex);
+            throw new FileStorageException("Could not read the uploaded file", ex);
         }
+
+        images.save(StoredImage.builder()
+                .filename(fileName)
+                .contentType(contentType)
+                .sizeBytes(bytes.length)
+                .data(bytes)
+                .build());
 
         String url = "/uploads/" + properties.articlesFolder() + "/" + fileName;
-        return new FileUploadResponse(url, fileName, file.getSize());
+        return new FileUploadResponse(url, fileName, bytes.length);
+    }
+
+    @Transactional(readOnly = true)
+    public StoredImage load(String fileName) {
+        return images.findByFilename(fileName)
+                .orElseThrow(() -> ResourceNotFoundException.of("Image", fileName));
     }
 
     private void validate(MultipartFile file) {

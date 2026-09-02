@@ -134,7 +134,6 @@ variable.
 | `JWT_SECRET`        | development placeholder                             | HS256 key, minimum 32 characters |
 | `JWT_EXPIRATION_MS` | `86400000`                                          | Token lifetime                   |
 | `CORS_ORIGINS`      | `http://localhost:4200,http://localhost:4300`       | Allowed frontend origins         |
-| `UPLOAD_DIR`        | `uploads`                                           | Folder for uploaded images       |
 | `ADMIN_EMAIL`       | `admin@example.com`                                 | Seeded admin account             |
 | `ADMIN_PASSWORD`    | placeholder                                         | Seeded admin password            |
 | `ADMIN_SEED_ENABLED`| `true`                                              | Turn the seeder off in production |
@@ -180,8 +179,8 @@ Spring Security is the real protection; the Angular guards only keep the admin s
   immediately rather than when the token expires.
 - **Headers** — CSP, `X-Frame-Options: DENY`, `nosniff`, Referrer-Policy, Permissions-Policy, HSTS.
 - **Uploads** — the file signature must match the declared type, so a script cannot be stored
-  behind an image name. SVG is rejected because it can carry script on this origin. Stored names
-  are fresh UUIDs, which rules out path traversal.
+  behind an image name. SVG is rejected because it can carry script on this origin. Images are
+  written to the database rather than the file system, so there is no path to traverse.
 - **Passwords** — BCrypt strength 12. A completed reset ends every session that was opened
   with the old password, and clears any brute force lockout.
 - **Account flows** — sign up, email verification and password reset answer the same way for a
@@ -236,7 +235,7 @@ Honest list of what is missing, roughly in priority order:
 - [ ] **Tests** — there are none, on either side
 - [ ] **Deployment** — no Dockerfile or hosting config; it runs locally only
 - [ ] **Database migrations** — currently `ddl-auto=update`, which is risky in production
-- [ ] **Uploaded images are never deleted** — removing an article leaves its files on disk
+- [ ] **Uploaded images are never deleted** — removing an article leaves its rows in `stored_images`
 - [ ] **Admin cannot change their own password from the UI**
 - [ ] **Draft autosave** — a token expiring mid-write loses the draft
 - [ ] Table button missing in the visual editor; image alt text cannot be edited
@@ -249,7 +248,7 @@ Honest list of what is missing, roughly in priority order:
 
 - The dev database lives in `backend/data/` and is git ignored, so a fresh clone starts empty and
   seeds itself.
-- Uploaded images live in `backend/uploads/`, also git ignored. Content that references them will
-  show broken images on a different machine.
+- Uploaded images live in the `stored_images` table, not on disk, so they follow the database to
+  any machine. `backend/uploads/` only holds files from before that change and is git ignored.
 - Reader progress falls back to `localStorage` when nobody is signed in, and is merged into the
   account on the next sign in.

@@ -7,7 +7,6 @@ import java.util.List;
 /** Binds the app.storage.* settings used by the upload endpoint. */
 @ConfigurationProperties(prefix = "app.storage")
 public record StorageProperties(
-        String uploadDir,
         String articlesFolder,
         long maxFileSizeBytes,
         List<String> allowedContentTypes

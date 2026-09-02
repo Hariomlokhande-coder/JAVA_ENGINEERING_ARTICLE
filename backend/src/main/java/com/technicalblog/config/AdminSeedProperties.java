@@ -10,4 +10,5 @@ public record AdminSeedProperties(
         String email,
         String password
 ) {
+        
 }

@@ -143,23 +143,33 @@ public class AuthService {
         String email = request.email().trim();
         String clientKey = email.toLowerCase(Locale.ENGLISH) + "|" + clientIp;
 
-        Duration blockedFor = loginAttemptService.blockedFor(clientKey);
-        if (!blockedFor.isZero()) {
-            throw new TooManyRequestsException(
-                    "Too many failed sign in attempts. Try again in " + (blockedFor.toMinutes() + 1) + " minute(s).");
+        Optional<User> account = userRepository.findByEmailIgnoreCase(email);
+        // Administrators are exempt from the throttle: locking the one account that can
+        // publish out of its own site was worse, in practice, than the brute force risk.
+        // An unknown address is still throttled, so the exemption cannot be probed for.
+        boolean throttled = account.map(candidate -> candidate.getRole() != Role.ADMIN).orElse(true);
+
+        if (throttled) {
+            Duration blockedFor = loginAttemptService.blockedFor(clientKey);
+            if (!blockedFor.isZero()) {
+                throw new TooManyRequestsException(
+                        "Too many failed sign in attempts. Try again in " + (blockedFor.toMinutes() + 1) + " minute(s).");
+            }
         }
 
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, request.password()));
         } catch (AuthenticationException ex) {
-            loginAttemptService.recordFailure(clientKey);
+            if (throttled) {
+                loginAttemptService.recordFailure(clientKey);
+            }
             // One message for unknown email and wrong password so accounts cannot be enumerated.
             throw new BadCredentialsException("Invalid email or password");
         }
 
         loginAttemptService.recordSuccess(clientKey);
 
-        User user = userRepository.findByEmailIgnoreCase(email)
+        User user = account
                 .orElseThrow(() -> new BadCredentialsException("Invalid email or password"));
 
         // Only reached with the correct password, so naming the reason reveals nothing new.
